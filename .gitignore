@@ -163,3 +163,4 @@ cython_debug/
 
 
 /j notebooks*
+/kaggle/data/titanic
