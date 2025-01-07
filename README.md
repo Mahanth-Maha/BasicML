@@ -20,15 +20,32 @@ OS : Windows (Cmd/PS)
 ### Setup a venv and create a kernal for vscode 
 
 ```bash
-conda create --name <NAME> python==<PyVersion> pandas numpy ipykernel ; 
-conda activate <NAME> ; 
-conda install -c anaconda ipykernel ; python -m ipykernel install --user --name <NAME> --display-name <"Kernal_Name"> ; 
-conda deactivate ; 
+conda create --name <NAME> python==<PyVersion>
+y
+conda activate <NAME>
+conda install -c anaconda ipykernel
+y
+python -m ipykernel install --user --name <NAME> --display-name <"Kernal_Name">
+conda deactivate
 exit
 ```
 
+
+
 - change ```<NAME>``` with env-name (EX: torchEnv)
 - change ```<"Kernal_Name">``` with env-name (EX: "tr" , note:in string quotes)
+
+Torch env :
+```bash
+conda create --name torch python==3.10
+y
+conda activate torch 
+conda install -c anaconda ipykernel 
+y
+python -m ipykernel install --user --name torch --display-name "torch" 
+conda deactivate 
+exit
+```
 
 ### To set jupyter notebook to print all / last expressions
 
