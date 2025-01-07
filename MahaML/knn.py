@@ -1,6 +1,6 @@
-from cProfile import label
 import numpy as np
 import matplotlib.pyplot as plt
+
 
 class knnClassifier:
     def __init__(self, k=3):
@@ -33,33 +33,45 @@ class knnClassifier:
         y_sets = np.array_split(y, sets)
         return X_sets, y_sets
 
-    def cross_valid_accuracy(self):
-        X_train_set, y_train_set = self.subset_set_split(self.X_train, self.y_train, sets=10)
-        sets_acc = []
-        for i in range(10):
-            X_train = np.concatenate([X_train_set[j] for j in range(10) if j != i])
-            y_train = np.concatenate([y_train_set[j] for j in range(10) if j != i])
-            X_valid = X_train_set[i]
-            y_valid = y_train_set[i]
-            self.fit(X_train, y_train)
-            y_pred = self.predict(X_valid)
-            acc = self.acc_score(y_valid, y_pred)
-            sets_acc.append(acc)
-        return np.mean(sets_acc)
-        
+    def k_nearest_neighbours(self, X, k):
+        distances = np.linalg.norm(self.X_train - X, axis=1)
+        first_k = np.argsort(distances)[:k]
+        unique_n = np.unique(self.y_train)
+        counts = np.zeros(len(unique_n))
+        for i, n in enumerate(unique_n):
+            counts[i] = np.sum(self.y_train[first_k] == n) 
+        return counts/ k
+    
     def predict(self,X):
         y = np.zeros(X.shape[0])
         for i in range(X.shape[0]):
-            distances = np.linalg.norm(self.X_train - X[i], axis=1)
-            first_k = np.argsort(distances)[:self.k]
-            nearest_labels = self.y_train[first_k]
-            unique, counts = np.unique(nearest_labels, return_counts=True)
-            y[i] = unique[np.argmax(counts)]
+            # distances = np.linalg.norm(self.X_train - X[i], axis=1)
+            # first_k = np.argsort(distances)[:self.k]
+            # nearest_labels = self.y_train[first_k]
+            # unique, counts = np.unique(nearest_labels, return_counts=True)
+            # y[i] = unique[np.argmax(counts)]
+            y[i] = np.argmax(self.k_nearest_neighbours(X[i], self.k))
         return y
     
-    def acc_score(self, y_true, y_pred):
-        return np.mean(y_true == y_pred)
-        
+    
+    def predict_probabilities(self,X):
+        y = []
+        for i in range(X.shape[0]):
+            # distances = np.linalg.norm(self.X_train - X[i], axis=1)
+            # first_k = np.argsort(distances)[:self.k]
+            # nearest_labels = self.y_train[first_k]
+            # unique, counts = np.unique(nearest_labels, return_counts=True)
+            # y.append(counts / self.k)
+            y.append(self.k_nearest_neighbours(X[i], self.k))
+        return y
+    
+    def get_y_based_on_threshold(self, X_test, threshold = 0.5):
+        y_prob = self.predict_probabilities(X_test)
+        y_pred = np.zeros(len(y_prob))
+        for i, yi in enumerate(y_prob):
+            y_pred[i] = np.argmax(yi) if max(yi) > threshold else -1
+        return y_pred
+
     def get_best_k(self, X, y, k_max = 20, plot_data=False):
         X_train, y_train, X_valid, y_valid = self.split_data(X, y)
         self.fit(X_train, y_train) 
@@ -106,6 +118,51 @@ class knnClassifier:
             self._plot_data_s(data_s)
         return best_k_s, best_acc_s , data_s
 
+    def cross_valid_accuracy(self):
+        X_train_set, y_train_set = self.subset_set_split(self.X_train, self.y_train, sets=10)
+        sets_acc = []
+        for i in range(10):
+            X_train = np.concatenate([X_train_set[j] for j in range(10) if j != i])
+            y_train = np.concatenate([y_train_set[j] for j in range(10) if j != i])
+            X_valid = X_train_set[i]
+            y_valid = y_train_set[i]
+            self.fit(X_train, y_train)
+            y_pred = self.predict(X_valid)
+            acc = self.acc_score(y_valid, y_pred)
+            sets_acc.append(acc)
+        return np.mean(sets_acc)
+
+    def acc_score(self, y_true, y_pred):
+        return np.mean(y_true == y_pred)
+
+    def confusion_matrix(self, y_true, y_pred):
+        n = len(np.unique(y_true))
+        cm = np.zeros((n,n))
+        for i in range(len(y_true)):
+            # cm[y_true[i]][y_pred[i]] += 1
+            cm[int(y_true[i]),int(y_pred[i])] += 1
+        return cm    
+
+    def roc_curve(self, X_test, y_test, plot_curve=False):
+        tpr = []
+        fpr = []
+        x_lims = np.linspace(0,1,101)
+        for threshold in x_lims:
+            y_pred = self.get_y_based_on_threshold(X_test, threshold=threshold)
+            cm = self.confusion_matrix(y_test, y_pred)
+            tpr.append(cm[1,1]/(cm[1,1] + cm[1,0]))
+            fpr.append(cm[0,1]/(cm[0,1] + cm[0,0]))
+            # print(f'Threshold = {threshold} : TPR = {tpr[-1]} , FPR = {fpr[-1]}')
+        if plot_curve:
+            plt.plot(fpr, tpr)
+            plt.plot([0,1],[0,1], linestyle='--')
+            plt.xlabel('False Positive Rate')
+            plt.ylabel('True Positive Rate')
+            plt.title('ROC Curve')
+            plt.grid(True)
+            plt.show()
+        return tpr, fpr 
+
     def _plot_data(self, data, called_by = 'Acc vs k'):
         best_k = max(data, key=data.get)
         x = list(data.keys())
@@ -140,9 +197,9 @@ class knnClassifier:
 
 if __name__ == '__main__':
     titanic_testing = True
-    iris_testing = True
+    iris_testing = False
     if titanic_testing :
-        plot_figs = True
+        plot_figs = False
         knn = knnClassifier()
         folder = './data/titanic/'
 
@@ -153,8 +210,11 @@ if __name__ == '__main__':
         
         print(f'\nTesting Working of KNN with k = {knn.k} on Titanic Data_set')
         knn.fit(X_train, y_train)
-        yPred =  knn.predict(X_test)
-        print(f'\tAccuracy on test data = {knn.acc_score(y_test, yPred)}')
+        y_pred =  knn.predict(X_test)
+        print(f'\tAccuracy on test data = {knn.acc_score(y_test, y_pred)}')
+        print(f'\tConfusion Matrix : \n{ knn.confusion_matrix(y_test, y_pred)}')
+        
+        knn.roc_curve(X_test, y_test, plot_curve=True)
 
         stars = 40
 
