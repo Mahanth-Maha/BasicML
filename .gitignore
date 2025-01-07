@@ -166,14 +166,11 @@ cython_debug/
 /kaggle/data*
 /ML_NLP_basics/data/aclImdb/train
 /ML_NLP_basics/data/aclImdb/test
-
 /ML_NLP_basics/data/aclImdb/imdb.vocab
-
 /ML_NLP_basics/data/aclImdb/imdbEr.txt
-
-
 /ML_NLP_basics/data/vehicle_prices
 
+/MahaML/data/MNIST/*.npy
 
 /Courses/Neural_Netowrks_for_ML/Lectures
 /Courses/Neural_Netowrks_for_ML/slides
