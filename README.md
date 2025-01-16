@@ -1,17 +1,27 @@
 # BasicML
-Learning basics of machine learning 
+Learning basics of Machine learning 
 
-Language : Python
+Language : Python - numpy, matplotlib, seaborn, scikit-learn, **pytorch**
 
 
+## Folder structure
 MahaML
 ---
-My implementation of algorithms with out using any in built modules and only depending on `numpy` , `matplotlib`, etc
+My implementation of algorithms *with out using any in built modules* and only depending on `numpy` , `matplotlib`, etc
 
-'TYPE' _basics
+'TYPE' _basics (folders ending with _basics)
 ---
 Learning of algorithms experimenting with datasets, implementations, simulations, etc 
-Also learning how to use libraries
+Also learning how to use libraries, and implement similar of my own in MahaML
+
+kaggle
+---
+competitions, submissions and related files
+
+datasets
+---
+some toy datasets to test 
+
 
 ## My Useful Setup codes
 
@@ -28,24 +38,13 @@ y
 python -m ipykernel install --user --name <NAME> --display-name <"Kernal_Name">
 conda deactivate
 exit
+
 ```
 
 
 
 - change ```<NAME>``` with env-name (EX: torchEnv)
-- change ```<"Kernal_Name">``` with env-name (EX: "tr" , note:in string quotes)
-
-Torch env :
-```bash
-conda create --name torch python==3.10
-y
-conda activate torch 
-conda install -c anaconda ipykernel 
-y
-python -m ipykernel install --user --name torch --display-name "torch" 
-conda deactivate 
-exit
-```
+- change ```<"Kernal_Name">``` with env-name (EX: "trenv" , note:in string quotes)
 
 ### To set jupyter notebook to print all / last expressions
 
