@@ -52,3 +52,5 @@ exit
 from IPython.core.interactiveshell import InteractiveShell
 InteractiveShell.ast_node_interactivity = "last"  # Options: 'last', 'all', 'last_expr'
 ```
+
+[![Page Views Count](https://badges.toozhao.com/badges/01JHW6EJD8WR0PK30ZESDZRPDT/green.svg)](https://badges.toozhao.com/stats/01JHW6EJD8WR0PK30ZESDZRPDT "Get your own page views count badge on badges.toozhao.com")

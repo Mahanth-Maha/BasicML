@@ -177,3 +177,5 @@ cython_debug/
 
 
 /pytorch_basics/data/MNIST/
+
+/DL_basics/Papers/*
