@@ -22,6 +22,9 @@ class LRegressor:
         y_pred = np.dot(X, self.w)
         return y_pred
 
+    def evaluate(self,y_true, y_pred):
+        return mse(y_true, y_pred)
+    
     def plot(self,Actual, Predicted):
         plt.scatter(Actual, Predicted , alpha=0.5)
         plt.plot([min(Actual), max(Actual)], [min(Actual), max(Actual)], color='red')

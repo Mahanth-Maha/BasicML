@@ -3,8 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from helpers import acc_score, split_dataset
 
-class LRClassifier:
+class LogisticRegression_Classifier:
     def __init__(self , alpha = 0.01 , max_iter = 1000 , stochastic = False , stochastic_choice = -1, epsilon = 1e-5):
+        # stochastic = True => mini batch gradient descent with batch_size =  stochastic_choice
         self.lr = alpha
         self.max_iter = max_iter
         self.stochastic = stochastic
@@ -18,11 +19,11 @@ class LRClassifier:
         self.classes = np.unique(y)
         if self.stochastic :
             if 0 < self.stochastic_choice < self.n:
-                self.K = self.stochastic_choice
+                self.mini_batch = self.stochastic_choice
             else :
-                self.K = np.random.randint(1,self.n)
+                self.mini_batch = np.random.randint(1,self.n)
         else :
-            self.K = self.n
+            self.mini_batch = self.n
         self.w = np.random.randn(self.m) + 0.5
         self.b = np.random.randn()
         self.losses = []
@@ -38,7 +39,8 @@ class LRClassifier:
     def update_weights(self):
         dw = np.zeros(self.m)
         db = 0
-        for i in range(self.K):
+        indices = np.random.choice(self.n, self.mini_batch, replace=False)
+        for i in indices:
             y_pred = self.sigmoid(np.dot(self.w, self.X_train[i]) + self.b)
             dw += (y_pred - self.y_train[i]) * self.X_train[i]
             db += (y_pred - self.y_train[i])
@@ -63,6 +65,7 @@ class LRClassifier:
         return np.exp(x) / np.sum(np.exp(x), axis=0) 
 
     def loss(self):
+        epsilon = 1e-15 
         loss = 0
         for i in range(self.n):
             if self.classes.shape[0] > 2:
@@ -70,6 +73,7 @@ class LRClassifier:
                 loss += -np.log(y_pred[self.y_train[i]])
             else:
                 y_pred = self.sigmoid(np.dot(self.w, self.X_train[i]) + self.b)
+                y_pred = np.clip(y_pred, epsilon, 1 - epsilon)
                 loss += self.y_train[i] * np.log(y_pred) + (1 - self.y_train[i]) * np.log(1 - y_pred)
         return -loss/self.n
 
@@ -103,7 +107,7 @@ if __name__ == '__main__':
         print("TESTING 1")
         print('+'*50)
 
-        lr = LRClassifier(
+        lr = LogisticRegression_Classifier(
             alpha=0.05,
             stochastic=True, 
             stochastic_choice = 100
@@ -133,7 +137,7 @@ if __name__ == '__main__':
         combine_y = np.hstack((y_train,y_test))
         X_train, X_test, y_train, y_test = split_dataset(combine_X, combine_y, test_size=0.2)
 
-        lr = LRClassifier()
+        lr = LogisticRegression_Classifier()
         lr.fit(X_train, y_train)
         y_pred =  lr.predict(X_test)
         print('\nMy \tLogistic Regression')
@@ -164,7 +168,7 @@ if __name__ == '__main__':
         # print('+'*50)
         # print("TESTING 1")
         # print('+'*50)
-        lr = LRClassifier()
+        lr = LogisticRegression_Classifier()
         lr.fit(X_train, y_train)
         y_pred =  lr.predict(X_test)
 

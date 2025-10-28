@@ -11,7 +11,7 @@ class ClassificationModel:
     def predict(self, X):
         pass
 
-    def evaluate(self, X, y):
+    def acc_score(self, y_true, y_pred):
         pass
 
     def plot(self):
@@ -27,7 +27,7 @@ class RegressionModel:
     def predict(self, X):
         pass
 
-    def evaluate(self, X, y):
+    def evaluate(self, y_true, y_pred):
         pass
 
     def plot(self):

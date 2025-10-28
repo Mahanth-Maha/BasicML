@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from helpers import split_dataset
 
-class NaiveBayes:
+class NaiveBayes_Classifier:
     def __init__(self, alpha=1):
         self.alpha = alpha
 
-    def fit(self, X, y, alpha = 0):
+    def fit(self, X, y, alpha = 1e-8):
         self.n,self.m = X.shape
         self.prior = np.zeros(len(np.unique(y)))
         self.likelihood = np.zeros((len(np.unique(y)), self.m))
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # X_train, X_test, y_train, y_test = split_dataset(X, y, test_size=0.2)
 
     # print("My Naive Bayes")
-    # nb = NaiveBayes()
+    # nb = NaiveBayes_Classifier()
     # nb.fit(X_train, y_train , alpha = 1e-9)
     # y_pred = nb.predict(X_test)
     # print('Acc : ', np.mean(y_pred == y_test))
@@ -83,7 +83,7 @@ if __name__ == '__main__':
     print("TESTING 1")
     print('+'*50)
 
-    nb2 = NaiveBayes()
+    nb2 = NaiveBayes_Classifier()
     nb2.fit(X_train, y_train, alpha = 1e-9)
     y_pred =  nb2.predict(X_test)
     print('\nMy \tNaive Bayes')
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
 
     X_train, X_test, y_train, y_test = split_dataset(combine_X, combine_y, test_size=0.2)
-    nb2 = NaiveBayes()
+    nb2 = NaiveBayes_Classifier()
     nb2.fit(X_train, y_train, alpha = 1)
     y_pred =  nb2.predict(X_test)
     print('\nMy \tNaive Bayes')
@@ -125,7 +125,7 @@ if __name__ == '__main__':
 '''
 conda activate iisc
 cd C:\Maha\dev\GitHub\BasicML\MahaML\
-python naiveBayes.py
+python naiveBayesClassification.py
 
 '''
 

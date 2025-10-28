@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from helpers import acc_score, split_dataset
 
-
-class knnClassifier:
+class KNearestN_Classifier:
     def __init__(self, k=3):
         self.k = k
         self.X_train = None
@@ -11,18 +11,6 @@ class knnClassifier:
     def fit(self, X, y):
         self.X_train = X
         self.y_train = y
-
-    def split_data(self, X, y, valid_size=0.2):
-        n = X.shape[0]
-        valid_size = int(n * valid_size)
-        indices = np.random.permutation(n)
-        X = X[indices]
-        y = y[indices]
-        X_valid = X[:valid_size]
-        y_valid = y[:valid_size]
-        X_train = X[valid_size:]
-        y_train = y[valid_size:]
-        return X_train, y_train, X_valid, y_valid
     
     def subset_set_split(self, X, y, sets = 10):
         n = X.shape[0]
@@ -73,7 +61,7 @@ class knnClassifier:
         return y_pred
 
     def get_best_k(self, X, y, k_max = 20, plot_data=False):
-        X_train, y_train, X_valid, y_valid = self.split_data(X, y)
+        X_train, y_train, X_valid, y_valid = split_dataset(X, y)
         self.fit(X_train, y_train) 
         best_k = 0
         best_acc = 0
@@ -200,7 +188,7 @@ if __name__ == '__main__':
     iris_testing = False
     if titanic_testing :
         plot_figs = False
-        knn = knnClassifier()
+        knn = KNearestN_Classifier()
         folder = './data/titanic/'
 
         X_train = np.load(folder + 'X_train.npy')
@@ -268,8 +256,8 @@ if __name__ == '__main__':
         iris = load_iris()
         X = iris.data
         y = iris.target
-        knn = knnClassifier()
-        X_train, y_train, X_test, y_test = knn.split_data(X, y)
+        knn = KNearestN_Classifier()
+        X_train, y_train, X_test, y_test = split_dataset(X, y)
         knn.fit(X_train, y_train)
         y_pred = knn.predict(X_test)
         print(f'Accuracy on Testing data = {knn.acc_score(y_test, y_pred)}')
